@@ -44,11 +44,10 @@ std::vector<std::vector<int>> Charge::initialPosition(int numOfCharge1, int Scre
 	numOfCharge = numOfCharge1;
 	return position;
 }
-void Charge::updatePosition( int ScreenWidth, int ScreenHigh, std::vector<std::vector<int>>* position,  int xposOfMouse, int yposOfMouse) {
+void Charge::updatePosition( int ScreenWidth, int ScreenHigh, std::vector<std::vector<int>>* position,  int xposOfMouse, int yposOfMouse,std::string inputString) {
 	if (xposOfMouse >= 0 && xposOfMouse < ScreenWidth && yposOfMouse >= 0 && yposOfMouse < ScreenHigh) {
-		std::cout << "Enter the value of charge want to add" << std::endl;
-		int charge;
-		std::cin >> charge;
+		// need to exempt the case when inputString is ""
+		int charge = stoi(inputString);
 		position->push_back({ charge, xposOfMouse, yposOfMouse });
 		numOfCharge++;
 	}

@@ -1,17 +1,21 @@
 #include"Screen.h"
 #include"MouseInput.h"
 #include"InputWindow.h"
+#include<string>
 #include<vector>
 #include<iostream>
 
+
 #define ScreenWidth 1500
 #define ScreenHigh 800
+
 Screen* screen1 = nullptr;
 int main(int argc, char* argv[]) {
 	SDL_Event event;
+	std::string inputString ="";
 	MouseInput* mouseInput = new MouseInput;
 	int xposOfMouse= 100, yposOfMouse = 200;
-	bool takeInputFromInputWindow;
+	bool renderInputWindow;
 	int numOfCharge,element;
 	std::cout << "Enter number of Charges: \n";
 	std::cin >> numOfCharge;
@@ -24,28 +28,42 @@ int main(int argc, char* argv[]) {
 	
 	while (isRunning) {
 		
-		
-		if(SDL_PollEvent(&event) == 1) {
+		if(SDL_WaitEvent(&event) == 1 ) {
 			if (event.type == SDL_MOUSEBUTTONDOWN) {
-				takeInputFromInputWindow = mouseInput->DoubleClickDetected(&xposOfMouse, &yposOfMouse, event);
-				if (takeInputFromInputWindow) {
+				renderInputWindow = mouseInput->DoubleClickDetected(&xposOfMouse, &yposOfMouse, event);
+				if (renderInputWindow) {
 					InputWindow::updatePosition(xposOfMouse, yposOfMouse);
-					screen1->update(position, takeInputFromInputWindow);
-					
-					Charge::updatePosition(ScreenWidth, ScreenHigh, &position, xposOfMouse, yposOfMouse);
-					takeInputFromInputWindow = false;
-					screen1->update(position, takeInputFromInputWindow);
-
+					screen1->update(position, true);
+					renderInputWindow = false;
 				}
+			}
+			else if (event.type == SDL_TEXTINPUT) {
+				inputString += event.text.text;
 				
+				InputWindow::updateTexture(inputString);
+				
+				screen1->update(position, true);	
+			}
+			else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_BACKSPACE && inputString.size()) {
+				inputString.pop_back();
+				InputWindow::updateTexture(inputString);
+
+				screen1->update(position, true);
+			}
+			else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == 13) {
+				std::cout << "enter detected" << std::endl;
+				Charge::updatePosition(ScreenWidth, ScreenHigh, &position, xposOfMouse, yposOfMouse,inputString);
+				screen1->update(position, false);
+				inputString = "";
+				InputWindow::updateTexture(inputString);
 			}
 			
-		}
+	}
 		if (event.type == SDL_QUIT) {
 
 			isRunning = false;
 		}
-		SDL_Delay(100);
+		
 	}
 	
 

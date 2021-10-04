@@ -12,9 +12,11 @@ private:
 	SDL_Texture* inputTexture;
 	int ScreenWidth;
 	int ScreenHeight;
+	//this buffer using for store information about fieldline
+	Uint32* buffer;
 public:
 	Screen(int ScreeWidth, int ScreenHeight);
-	void update(std::vector<std::vector<int>> position, bool takeInputFromInputWindow);
+	void update(std::vector<std::vector<int>> position, bool renderInputWindow);
 	void clean();
 };
 
